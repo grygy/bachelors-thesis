@@ -130,3 +130,6 @@ dmypy.json
 
 # DS file
 .DS_Store
+
+# Datasets
+/datasets/
