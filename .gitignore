@@ -133,3 +133,6 @@ dmypy.json
 
 # Datasets
 /datasets/
+
+# tmp
+tmp/
