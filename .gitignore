@@ -132,7 +132,16 @@ dmypy.json
 .DS_Store
 
 # Datasets
-/datasets/
+**/datasets/
 
 # tmp
 tmp/
+
+# models
+**/*_models*/
+
+# zips
+*.zip
+
+# projekt/training_on_gpu/
+projekt/training_on_gpu/
