@@ -62,18 +62,8 @@ def main(argv):
     def evaluate_model(model_path, dataset_path):
         """ returns EvaluatedModel for given model and dataset """
 
-        # model cannot use
-        if "dynamic_rage_quantization" in model_path:
-            print("model cannot use  NNAPI\n\n")
-            return EvaluatedModel(dict1=None,
-                                  y_pred=[],
-                                  y_true=[],
-                                  model_name=model_path.split('/')[-1],
-                                  avg_time=0,
-                                  gzip_size=0)
-
         interpreter = tflite.Interpreter(
-            model_path=model_path, num_threads=None)
+            model_path=model_path, num_threads=6)
         interpreter.allocate_tensors()
 
         input_details = interpreter.get_input_details()
@@ -93,6 +83,10 @@ def main(argv):
         for subdir, dirs, files in os.walk(dataset_path):
             for file in files:
                 if file == '.DS_Store':
+                    continue
+
+                # skip every 6 image because efficient net is slow
+                if model == "EfficentNetB0" and dataset == "flowers" and int(file.split('.')[0]) % 4 != 0:
                     continue
 
                 y_true.append(int(subdir.split('/')[-1]))
@@ -119,6 +113,8 @@ def main(argv):
 
                 # remove batch dimension and return predicted label
                 y_pred.append(np.argmax(output[0]).item())
+
+
 
         gzip_size = get_gzipped_model_size(model_path)
 
