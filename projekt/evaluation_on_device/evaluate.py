@@ -44,7 +44,7 @@ class EvaluatedModelEncoder(JSONEncoder):
 
 def main(argv):
     if len(argv) != 2:
-        print('args: beans/flowers MobileNetV2/EfficentNetB0')
+        print('args: beans/flowers/tf_flowers MobileNetV2/EfficentNetB0')
         sys.exit(2)
     # parse arguments
     dataset = argv[0]
@@ -80,12 +80,14 @@ def main(argv):
         y_pred = []
         avg_time = 0.0
 
+        is_first = True
+
         for subdir, dirs, files in os.walk(dataset_path):
             for file in files:
                 if file == '.DS_Store':
                     continue
 
-                # skip every 6 image because efficient net is slow
+                # skip every 6th image because efficient net is slow
                 if model == "EfficentNetB0" and dataset == "flowers" and int(file.split('.')[0]) % 4 != 0:
                     continue
 
@@ -101,8 +103,11 @@ def main(argv):
 
                 interpreter.set_tensor(input_details[0]['index'], test_image)
 
+
                 # ignore the 1st invoke
-                interpreter.invoke()
+                if is_first:
+                    interpreter.invoke()
+                    is_first = False
 
                 startTime = time.time()
                 interpreter.invoke()
@@ -113,7 +118,6 @@ def main(argv):
 
                 # remove batch dimension and return predicted label
                 y_pred.append(np.argmax(output[0]).item())
-
 
 
         gzip_size = get_gzipped_model_size(model_path)
