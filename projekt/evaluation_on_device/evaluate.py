@@ -61,10 +61,18 @@ def main(argv):
 
     def evaluate_model(model_path, dataset_path):
         """ returns EvaluatedModel for given model and dataset """
-
-        interpreter = tflite.Interpreter(
-            model_path=model_path, num_threads=6)
-        interpreter.allocate_tensors()
+        try:
+            interpreter = tflite.Interpreter(
+                model_path=model_path, num_threads=6)
+            interpreter.allocate_tensors()
+        except:
+            print("Failed allocate  tensors")
+            return EvaluatedModel(dict1=None,
+                                         y_pred=[],
+                                         y_true=[],
+                                         model_name=model_path.split('/')[-1],
+                                         avg_time=0,
+                                         gzip_size=0)
 
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
@@ -118,6 +126,7 @@ def main(argv):
 
                 # remove batch dimension and return predicted label
                 y_pred.append(np.argmax(output[0]).item())
+
 
 
         gzip_size = get_gzipped_model_size(model_path)
