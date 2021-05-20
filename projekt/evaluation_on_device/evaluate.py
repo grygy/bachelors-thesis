@@ -44,7 +44,7 @@ class EvaluatedModelEncoder(JSONEncoder):
 
 def main(argv):
     if len(argv) != 2:
-        print('args: beans/flowers/tf_flowers MobileNetV2/EfficentNetB0')
+        print('args: beans|flowers|tf_flowers MobileNetV2|EfficentNetB0')
         sys.exit(2)
     # parse arguments
     dataset = argv[0]
@@ -126,6 +126,7 @@ def main(argv):
 
                 # remove batch dimension and return predicted label
                 y_pred.append(np.argmax(output[0]).item())
+
 
 
 
